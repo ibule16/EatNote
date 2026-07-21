@@ -1,0 +1,63 @@
+/* 整個彈窗畫面 */
+.modal{
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.400);
+}
+
+/* 彈窗內容區塊 */
+.modalContent{
+    background-color: rgb(255, 240, 240);
+    margin: 10% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 特殊符號 X */
+#closeModal{
+    float: right;
+    font-size: 30px; 
+    cursor: pointer; /* 滑鼠移上去變成手指 */
+    padding: 0 10px;
+}
+
+/* 每個輸入框群組 */
+.formGroup{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+/* 標籤樣式 */
+.formGroup label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+/* 輸入框樣式 */
+.modalContent input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px; /* 手機瀏覽時，字體大於 16px 才不會自動放大頁面 */
+}
+
+.formRow{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.formRow .formGroup {
+    flex: 1; /* 讓兩個欄位平分寬度 */
+}
