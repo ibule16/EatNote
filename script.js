@@ -63,7 +63,7 @@ onAuthStateChanged(auth, async (user) => {
         userDropdown.classList.add("hidden");
         console.log("使用者已登出");
         allRecords = [];
-        renderFoodList([]);
+        renderCards([]);
     }
 });
 
