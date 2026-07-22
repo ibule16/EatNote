@@ -1,5 +1,174 @@
 /* 整個彈窗畫面 */
-.modal{
+body {
+    background-color: #faecdb;
+}
+
+p {
+    color: #6d2932;
+}
+
+.mainHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fff6ec;
+    border-bottom: 1px solid #e0d6cd;
+}
+
+#userArea {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #561c24;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.dropdownMenu {
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 容器自動排列 */
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-full, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* 卡片樣式 */
+.card {
+    background-color: #fff6ec;
+    border: 1px solid #cbb6a0;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 懸停效果 */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+
+    background-color: #561c24;
+    color: #ebd8c4;
+    font-size: 30px;
+    font-weight: bold;
+    border: none;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+    z-index: 1000;
+
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    background-color: #7a2a35;
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+h2 {
+    color: #561c24;
+    margin: 0; /* 清除標題上下預設的留白 */
+}
+
+/* -------------------- */
+#detailBody {
+    position: relative; /* 讓內部的絕對定位按鈕以此為準 */
+    min-height: 200px; /* 確保內容足夠高，避免蓋住按鈕 */
+    padding-bottom: 70px; /* 預留底部空間，避免文字內容與按鈕重疊 */
+}
+
+/* 詳細資料視窗容器 */
+.detailModalBox {
+    background-color: #ebd8c4;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    max-height: 80vh;
+    position: relative; /* 這是絕對定位的基準 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 詳細資料的捲動區 */
+.detailScrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 60px; /* 預留空間給右下角的按鈕 */
+}
+
+/* 按鈕的基本樣式 */
+#editBtn {
+    position: absolute;
+    bottom: 20px; /* 距離底部 20px */
+    right: 20px;  /* 距離右側 20px */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* 圓形 */
+    background-color: #561c24;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px; /* 筆圖示的大小 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 加點陰影增加立體感 */
+    transition: background-color 0.3s;
+}
+
+#editBtn:hover {
+    background-color: #7a3841; /* 滑鼠移上去變色 */
+}
+/* -------------------- */
+
+/* -------------------- */
+.modal {
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -9,29 +178,43 @@
     background-color: rgba(0, 0, 0, 0.400);
 }
 
+.modalHeader {
+    display: flex;
+    justify-content: space-between; /* 把兩個元素分開，一個靠左，一個靠右 */
+    align-items: center; /* 讓標題和叉叉在垂直方向上置中對齊 */
+    margin-bottom: 15px; /* 與下方輸入框保持距離 */
+}
+
 /* 彈窗內容區塊 */
-.modalContent{
-    background-color: rgb(255, 240, 240);
-    margin: 10% auto;
-    padding: 20px;
-    width: 80%;
+.modalContent {
+    background-color: #ebd8c4;
+    margin: 5% auto;
+    padding: 40px;
+    width: 90%;
     max-width: 500px;
     border-radius: 10px;
+
+    max-height: 80vh;
+    overflow: auto;
+
     gap: 15px;
     display: flex;
     flex-direction: column;
 }
 
 /* 特殊符號 X */
-#closeModal{
-    float: right;
+#closeModal {
     font-size: 30px; 
     cursor: pointer; /* 滑鼠移上去變成手指 */
     padding: 0 10px;
+    line-height: 1;
 }
+/* -------------------- */
+
+
 
 /* 每個輸入框群組 */
-.formGroup{
+.formGroup {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -40,19 +223,29 @@
 /* 標籤樣式 */
 .formGroup label {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
     font-size: 14px;
 }
 
 /* 輸入框樣式 */
-.modalContent input {
+.modalContent input,
+.modalContent textarea {
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px; /* 手機瀏覽時，字體大於 16px 才不會自動放大頁面 */
+
+    display: block;
+    width: 100%; /* 讓輸入框填滿它所在的 formGroup */
+    box-sizing: border-box; /* 確保輸入框不會因為 padding 撐大 */
+
+    font-family: inherit; /* 確保字體統一 */
+    resize: vertical;
+
+    background-color: #fff6ec;
+    border: 1px solid #cbb6a0;
 }
 
-.formRow{
+.formRow {
     display: flex;
     gap: 10px;
     width: 100%;
@@ -61,3 +254,34 @@
 .formRow .formGroup {
     flex: 1; /* 讓兩個欄位平分寬度 */
 }
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse; /* 反向排列 */
+    justify-content: flex-end; /* 靠右對齊 */
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+/* 滑鼠移上去時，變亮 */
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #561c24;
+}
+
+/* 當被點選時，鎖定顏色 */
+.rating input:checked ~ label {
+    color: #561c24;
+}
+

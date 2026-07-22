@@ -3,7 +3,7 @@ console.log("程式開始執行了。");
 // 1. 導入 Firebase 模組
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBarB2bsX_71xnJ3lE27vnRaw7x3SJL5G0",
@@ -19,95 +19,180 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+// 存放所有資料的陣列
+let allRecords = [];
+let currentEditId = null;
+
+const userArea = document.getElementById("userArea");
+const userDropdown = document.getElementById("userDropdown");
+const logoutBtn = document.getElementById("logoutBtn");
+const modal = document.getElementById("modal");
 const loginBtn = document.getElementById("loginBtn");
 const saveBtn = document.getElementById("saveBtn");
+const addRecordBtn = document.getElementById("addRecordBtn");
+const closeModal = document.getElementById("closeModal");
 
-// Firebase 功能函式
-// 儲存單筆食物資料到該使用者的子集合 "foods"
-async function saveFoodRecord(record) {
-    const user = auth.currentUser;
-    if (!user) {
-        alert("請先登入才能儲存。");
-        return;
-    }
+// 監聽登入狀態切換
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        // 已登入顯示頭像
+        const initial = user.email ? user.email[0].toUpperCase() : 'U';
+        userArea.innerHTML = `<div class="avatar" id="avatarBtn">${initial}</div>`;
 
-    try {
-        // 在 users 底下該用戶的 foods 集合中新增一筆文件
-        await addDoc(collection(db, "users", user.uid, "foods"), {
-            ...record,
-            createdAt: new Date().toISOString()
+        // 綁定點及頭像顯示下拉選單
+        document.getElementById("avatarBtn").addEventListener("click", () => {
+           userDropdown.classList.toggle("hidden"); 
         });
-        console.log("資料已成功儲存至 Firestore");
-        alert("儲存成功。");
-    } catch (e) {
-        console.error("儲存失敗:", e);
-        alert("儲存失敗，請檢查網路或權限。");
+
+        console.log("使用者已登入:", user.displayName);
+
+        await fetchFoodRecords();
+        
+    } else {
+        // 未登入顯示登入按鈕
+        userArea.innerHTML = `<button id="loginBtn">登入</button>`;
+
+        document.getElementById("loginBtn").addEventListener("click", () => {
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            signInWithPopup(auth, provider).catch(console.error);
+        });
+
+        userDropdown.classList.add("hidden");
+        console.log("使用者已登出");
+        allRecords = [];
+        renderFoodList([]);
     }
-}
+});
+
+// 登出功能
+logoutBtn.addEventListener("click", () => {
+    signOut(auth).then(() => {
+        userDropdown.classList.add("hidden"); // 登出後關閉選單
+        allRecords = [];
+        renderCards([]);
+
+    console.log("已手動登出並清空資料");
+    }).catch((error) => {
+        console.error("登出失敗:", error);
+    });
+});
 
 // 讀取該使用者的所有食物紀錄
 async function fetchFoodRecords() {
     const user = auth.currentUser;
-    if (!user) return [];
+    if (!user) return ;
 
     const q = query(collection(db, "users", user.uid, "foods"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
-    const records = [];
+
+    allRecords = [];
     querySnapshot.forEach((doc) => {
-        records.push({ id: doc.id, ...doc.data() });
+        allRecords.push({ id: doc.id, ...doc.data() });
     });
-    return records;
+    renderCards(allRecords); // 初始渲染全部
 }
 
-// 登入按鈕
-loginBtn.addEventListener("click", () => {
-    const user = auth.currentUser;
-    if (user) {
-        // 如果已登入，點擊則執行登出
-        signOut(auth).then(() => {
-            console.log("已登出。");
-        }).catch((error) => console.error("登出錯誤:", error));
-    } else {
-        // 如果未登入，使用 Popup 登入
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                console.log("登入成功:", result.user.displayName);
-            })
-            .catch((error) => {
-                console.error("登入失敗:", error);
-                alert("登入失敗，請確認瀏覽器是否允許彈出視窗。");
-            });
-    }
-});
+// 渲染卡片的通用函式
+function renderCards(dataArray) {
+    const listElement = document.getElementById('cardList');
+    listElement.innerHTML = "";
+    
+    dataArray.forEach((data) => {
+        const card = document.createElement('div');
+        card.className = 'card';
 
-// 監聽登入狀態切換
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("使用者已登入:", user.displayName);
-        loginBtn.textContent = "登出";
-        fetchFoodRecords();
-        renderFoodList();
-    } else {
-        console.log("使用者已登出");
-        loginBtn.textContent = "使用 Google 登入";
-        document.getElementById("foodList").innerHTML = "";
-    }
-});
+        const starDisplay = '★'.repeat(data.rating || 0) + '☆'.repeat(5 - (data.rating || 0));
+        
+        card.innerHTML = `
+            <h3>${data.foodName}</h3>
+            <p class="cardFood">${data.shopName}</p>
+            <div class="cardRating">${starDisplay}</div>
+            <p class="cardcomment">${data.comment}</p>
+        `;
 
-// --------------------------------------------------------------
+        // 點擊卡片觸發詳情視窗
+        card.addEventListener('click', () => {
+            showDetail(data);
+        });
 
-const date = document.getElementById("date");
-const shopName = document.getElementById("shopName");
-const foodName = document.getElementById("foodName");
-const foodType = document.getElementById("foodType");
-const price = document.getElementById("price");
-const comment = document.getElementById("comment");
-const rating = document.getElementById("rating");
-const photo = document.getElementById("photo");
-const url = document.getElementById("url");
+        listElement.appendChild(card);
+    });
+}
 
-// 儲存按鈕
+// 顯示詳細資料
+function showDetail(data) {
+    const detailModal = document.getElementById('detailModal');
+
+    detailModal.innerHTML = `
+        <div class="detailModalBox">
+            <div id="closeDetailModal" style="text-align: right; cursor: pointer; font-size: 20px;">✖</div>
+            <div class="detailScrollArea">
+                <p><strong>店家：</strong> ${data.shopName}</p>
+                <p><strong>日期：</strong> ${data.date}</p>
+                <p><strong>類型：</strong> ${data.foodType || '無'}</p>
+                <p><strong>價格：</strong> $ ${data.price || '0'}</p>
+                <p><strong>評分：</strong> ${'★'.repeat(data.rating || 0)}</p>
+                <hr>
+                <p><strong>心得感想：</strong></p>
+                <p style="padding: 10px; border-radius: 5px;">${data.comment || '無心得'}</p>
+                ${data.url ? `<p><strong>連結：</strong><br><a href="${data.url}" target="_blank" style="word-break: break-all; color: #561c24;">${data.url}</a></p>` : ''}
+            </div>
+            <button id="editBtn" title="編輯紀錄">✎</button>
+        </div>
+    `;
+    
+    // 重新綁定關閉按鈕事件 (因為上面的 HTML 被重置了)
+    document.getElementById("closeDetailModal").addEventListener("click", () => {
+        detailModal.style.display = "none";
+    });
+
+    // 處理編輯按鈕綁定 
+    document.getElementById("editBtn").addEventListener("click", () => {
+        detailModal.style.display = "none";
+        document.getElementById("modal").style.display = "block";
+        
+        currentEditId = data.id; 
+        document.getElementById("date").value = data.date || "";
+        document.getElementById("shopName").value = data.shopName || "";
+        document.getElementById("foodName").value = data.foodName || "";
+        document.getElementById("foodType").value = data.foodType || "";
+        document.getElementById("price").value = data.price || "";
+        document.getElementById("comment").value = data.comment || "";
+        document.getElementById("url").value = data.url || "";
+
+        document.querySelectorAll('input[name="rating"]').forEach(radio => radio.checked = false);
+        if (data.rating) {
+            const radioBtn = document.querySelector(`input[name="rating"][value="${data.rating}"]`);
+            if (radioBtn) radioBtn.checked = true;
+        }
+    });
+    
+    detailModal.style.display = "block";
+}
+
+// 搜尋與篩選邏輯
+function applyFilters() {
+    const keyword = searchInput.value.toLowerCase();
+    const category = categoryFilter.value;
+
+    const filtered = allRecords.filter(item => {
+        const matchKeyword = item.foodName.toLowerCase().includes(keyword) || item.shopName.toLowerCase().includes(keyword);
+        const matchCategory = (category === "all") || (item.foodType === category);
+        return matchKeyword && matchCategory;
+    });
+    renderCards(filtered);
+}
+
+searchInput.addEventListener("input", applyFilters);
+categoryFilter.addEventListener("change", applyFilters);
+
+// 新增紀錄中的儲存按鈕
 saveBtn.addEventListener("click", async () => {
+    const selectedRating = document.querySelector('input[name="rating"]:checked');
+
     const record = {
         date: document.getElementById("date").value,
         shopName: document.getElementById("shopName").value,
@@ -115,60 +200,44 @@ saveBtn.addEventListener("click", async () => {
         foodType: document.getElementById("foodType").value,
         price: Number(document.getElementById("price").value),
         comment: document.getElementById("comment").value,
-        rating: Number(document.getElementById("rating").value),
+        rating: selectedRating ? Number(selectedRating.value) : 0,
         url: document.getElementById("url").value
     };
 
     // 簡單驗證
     if (!record.foodName || !record.shopName) {
-        alert("請填寫必要的名稱欄位！");
+        alert("請填寫必要的名稱欄位。");
         return;
     }
 
-    await saveFoodRecord(record);
+    if (currentEditId) {
+        // 如果 currentEditId 有值，代表是「編輯模式」 -> 執行更新
+        const docRef = doc(db, "users", auth.currentUser.uid, "foods", currentEditId);
+        await updateDoc(docRef, record);
+        alert("修改成功！");
+    } else {
+        // 如果沒有值，代表是「新增模式」 -> 執行新增
+        await addDoc(collection(db, "users", auth.currentUser.uid, "foods"), { ...record, createdAt: new Date().toISOString() });
+    }
+
+    // 儲存後重置狀態與視窗
+    currentEditId = null;
     modal.style.display = "none";
-    renderFoodList();
+
+    // 清空表單欄位，避免下次打開還有舊資料
+    document.querySelectorAll("input, textarea").forEach(input => { if(input.type !== "radio") input.value = ""; });
+    
+    fetchFoodRecords(); // 儲存後重新抓一次資料
 });
 
-// 讀取資料並渲染到畫面
-async function renderFoodList(){
-    const listElement = document.getElementById("foodList");
-    const user = auth.currentUser;
 
-    if(!user){
-        listElement.innerHTML = "<p>請先登入以查看紀錄。</p>";
-        return;
-    }
-
-    // 讀取該使用者的資料
-    const querySnapshot = await getDocs(collection(db, "users", user.uid, "foods"));
-
-    // 清空目前列表
-    listElement.innerHTML = "";
-
-    // 搜尋每一筆資料並加入畫面
-    querySnapshot.forEach((doc) =>{
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.className = "foodItem"; // CSS
-        div.innerHTML = `
-            <h3>${data.foodName} (${data.shopName})</h3>
-            <p>日期：${data.date}</p>
-            <p>價格：${data.price}元</p>
-            <p>感想：${data.comment}</p>
-            <p>評分：${data.rating}星</p>
-            <hr>
-        `
-        listElement.appendChild(div);
-    });
-}
-
-const modal = document.getElementById("modal");
-const addRecordBtn = document.getElementById("addRecordBtn");
-const closeModal = document.getElementById("closeModal");
 
 // 打開視窗
 addRecordBtn.addEventListener("click", () =>{
+    currentEditId = null; // 強制重置 ID
+    
+    // 清空舊表單資料
+    document.querySelectorAll("input, textarea").forEach(input => { if(input.type !== "radio") input.value = ""; });
     modal.style.display = "block";
 });
 
@@ -181,5 +250,18 @@ closeModal.addEventListener("click", () =>{
 window.addEventListener("click", (event) =>{
     if(event.target == modal){
         modal.style.display = "none";
+    }
+});
+
+// 關閉詳細資料視窗
+document.getElementById("closeDetailModal").addEventListener("click", () => {
+    document.getElementById("detailModal").style.display = "none";
+});
+
+// 點擊背景關閉
+window.addEventListener("click", (event) => {
+    const detailModal = document.getElementById("detailModal");
+    if (event.target == detailModal) {
+        detailModal.style.display = "none";
     }
 });

@@ -3,22 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>食物圖鑑</title>
+    <title>EatNote</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <button id="addRecordBtn">新增紀錄</button>
-    <button id="loginBtn">登入</button>
+    <header class="mainHeader">
+        <!--搜尋框-->
+        <div class="searchBox">
+            <input type="text" id="searchInput" placeholder="搜尋店家 / 食物">
+            
+            <!-- 篩選的下拉選單 -->
+            <select id="categoryFilter">
+                <option value="all">所有類別</option>
+                <option value="飲料">飲料</option>
+                <option value="飯">飯</option>
+                <option value="麵">麵</option>
+                <option value="早餐">早餐</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
 
-    <div id="foodList"></div> <!-- 列表容器 -->
+        <!--用戶登入-->
+        <div id="userArea">
+            <button id="loginBtn">登入</button>
+        </div>
+    </header>
+
+    <!--下拉選單（預設隱藏）-->
+    <div id="userDropdown" class="dropdownMenu hidden">
+        <button id="logoutBtn">登出</button>
+    </div>
+
+    <button id="addRecordBtn" class="fab" aria-label="新增紀錄">+</button>
+
+    <div id="cardList" class="cardGrid"></div> <!-- 列表容器 -->
 
     <!-- 彈出視窗背景層 (覆蓋整個螢幕) -->
     <div id="modal" class="modal" style="display: none;">
         <div class="modalContent">
-            <span id="closeModal">&times;</span> <!-- 顯示特殊符號 X -->
 
-            <h2>新增記錄</h2>
+            <div class="modalHeader">
+                <h2>新增記錄</h2>
+                <span id="closeModal">&times;</span> <!-- 顯示特殊符號 X -->
+            </div>
 
             <div class="formGroup">
                 <label for="date">日期：</label>
@@ -56,17 +84,23 @@
             
             <div class="formGroup">
                 <label for="comment">感想：</label>
-                <textarea id="comment"></textarea>
+                <textarea id="comment" rows="5"></textarea>
             </div>
 
             <div class="formGroup">
-                <label for="rating">評分</label>
-                <input type="number" id="rating" min="1" max="5">
-            </div>
-            
-            <div class="formGroup">
-                <label for="photo">上傳照片：</label>
-                <input type="file" id="photo" accept="image/*">
+                <label for="rating">評分：</label>
+                <div class="rating">
+                    <input type="radio" id="star5" name="rating" value="5">
+                    <label for="star5">★</label>
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4">★</label>
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3">★</label>
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2">★</label>
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1">★</label>
+                </div>
             </div>
 
             <div class="formGroup">
@@ -75,6 +109,19 @@
             </div>
             
             <button id="saveBtn">儲存</button>
+        </div>
+    </div>
+
+    <!-- 詳細資料視窗 -->
+    <div id="detailModal" class="modal" style="display: none;">
+        <div class="modalContent">
+            <div class="modalHeader">
+                <h2 id="detailTitle">詳細紀錄</h2>
+                <span id="closeDetailModal">&times;</span>
+            </div>
+            <div id="detailBody">
+                <!-- 透過 JS 填入內容 -->
+            </div>
         </div>
     </div>
 
