@@ -330,10 +330,11 @@ h3 {
 }
 
 .modalHeader {
+    height: 50px;
     display: flex;
     justify-content: space-between; /* 把兩個元素分開，一個靠左，一個靠右 */
     align-items: center; /* 讓標題和叉叉在垂直方向上置中對齊 */
-    margin-bottom: 15px; /* 與下方輸入框保持距離 */
+    margin-bottom: 10px; /* 與下方輸入框保持距離 */
 }
 
 /* 彈窗內容區塊 */
