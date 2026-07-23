@@ -403,7 +403,7 @@ h2 {
     font-family: inherit; /* 確保字體統一 */
     resize: vertical;
 
-    background-color:Z #fff6ec;
+    background-color: #ffffff;
     border: 1px solid #cbb6a0;
 }
 
@@ -412,7 +412,7 @@ h2 {
     -webkit-appearance: none; /* 移除 Safari/Chrome 的原生樣式 */
     appearance: none;
     width: 100%; /* 強制寬度填滿 */
-    height: 43px !important;
+    height: 45px !important;
     box-sizing: border-box; /* 確保內距不會撐開寬度 */
     display: block;
 
@@ -420,7 +420,7 @@ h2 {
     font-size: 16px;        
     border: 1px solid #cbb6a0; 
     border-radius: 5px;     
-    background: #fff6ec !important;
+    background: #ffffff !important;
     font-family: inherit;
 }
 
