@@ -408,6 +408,7 @@ h2 {
     -webkit-appearance: none; /* 移除 Safari/Chrome 的原生樣式 */
     appearance: none;
     width: 100%; /* 強制寬度填滿 */
+    height: 42px !important;
     box-sizing: border-box; /* 確保內距不會撐開寬度 */
     display: block;
 
@@ -415,7 +416,7 @@ h2 {
     font-size: 16px;        
     border: 1px solid #cbb6a0; 
     border-radius: 5px;     
-    background-color: #fff6ec;
+    background-color: #fff6ec !important;
     font-family: inherit;
 }
 
