@@ -254,6 +254,7 @@ h3 {
 /* 詳細資料的捲動區 */
 .detailScrollArea {
     flex: 1;
+    overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 60px; /* 預留空間給右下角的按鈕 */
 }
@@ -351,6 +352,7 @@ h2 {
     transform: translate(-50%, -50%);
 
     max-height: 80vh;
+    overflow-x: hidden;
     overflow-y: auto;
     gap: 15px;
     display: flex;
@@ -399,6 +401,15 @@ h2 {
 
     background-color:Z #fff6ec;
     border: 1px solid #cbb6a0;
+}
+
+/* 強制修正日期輸入框在手機上的預設樣式 */
+input[type="date"] {
+    -webkit-appearance: none; /* 移除 Safari/Chrome 的原生樣式 */
+    appearance: none;
+    width: 100%; /* 強制寬度填滿 */
+    box-sizing: border-box; /* 確保內距不會撐開寬度 */
+    display: block;
 }
 
 .formRow {
