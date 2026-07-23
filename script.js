@@ -31,6 +31,8 @@ const loginBtn = document.getElementById("loginBtn");
 const saveBtn = document.getElementById("saveBtn");
 const addRecordBtn = document.getElementById("addRecordBtn");
 const closeModal = document.getElementById("closeModal");
+const listElement = document.getElementById('cardList');
+const loginMessage = document.getElementById("loginMessage");
 
 // 監聽登入狀態切換
 onAuthStateChanged(auth, async (user) => {
@@ -38,6 +40,12 @@ onAuthStateChanged(auth, async (user) => {
         // 已登入顯示頭像
         const initial = user.email ? user.email[0].toUpperCase() : 'U';
         userArea.innerHTML = `<div class="avatar" id="avatarBtn">${initial}</div>`;
+
+        // 隱藏提示文字
+        loginMessage.classList.add("hidden");
+
+        // 顯示新增按鈕
+        addRecordBtn.style.display = "block";
 
         // 綁定點及頭像顯示下拉選單
         document.getElementById("avatarBtn").addEventListener("click", () => {
@@ -51,6 +59,12 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         // 未登入顯示登入按鈕
         userArea.innerHTML = `<button id="loginBtn">登入</button>`;
+
+        // 顯示提示文字
+        loginMessage.classList.remove("hidden");
+
+        // 隱藏新增按鈕
+        addRecordBtn.style.display = "none";
 
         document.getElementById("loginBtn").addEventListener("click", () => {
             provider.setCustomParameters({
@@ -97,7 +111,6 @@ async function fetchFoodRecords() {
 
 // 渲染卡片的通用函式
 function renderCards(dataArray) {
-    const listElement = document.getElementById('cardList');
     listElement.innerHTML = "";
     
     dataArray.forEach((data) => {
@@ -106,9 +119,15 @@ function renderCards(dataArray) {
 
         const starDisplay = '★'.repeat(data.rating || 0) + '☆'.repeat(5 - (data.rating || 0));
         
+        // 取得該類別對應的圖示
+        const iconSvg = getCategoryIcon(data.foodType);
+
         card.innerHTML = `
-            <h3>${data.foodName}</h3>
-            <p class="cardFood">${data.shopName}</p>
+            <div class="cardHeader">
+                <span class="typeIcon">${iconSvg}</span>
+                <h3>${data.foodName}</h3>
+            </div>
+            <p class="cardShop">${data.shopName}</p>
             <div class="cardRating">${starDisplay}</div>
             <p class="cardcomment">${data.comment}</p>
         `;
@@ -122,23 +141,37 @@ function renderCards(dataArray) {
     });
 }
 
+// 圖示對照表
+function getCategoryIcon(type) {
+    const icons = {
+        '飲料': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cup-soda-icon lucide-cup-soda"><path d="m6 8 1.75 12.28a2 2 0 0 0 2 1.72h4.54a2 2 0 0 0 2-1.72L18 8"/><path d="M5 8h14"/><path d="M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0"/><path d="m12 8 1-6h2"/></svg>',
+        '飯': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bean-icon lucide-bean"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></svg>',
+        '麵': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-soup-icon lucide-soup"><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/><path d="M7 21h10"/><path d="M19.5 12 22 6"/><path d="M16.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.73 1.62"/><path d="M11.25 3c.27.1.8.53.74 1.36-.05.83-.93 1.2-.98 2.02-.06.78.33 1.24.72 1.62"/><path d="M6.25 3c.27.1.8.53.75 1.36-.06.83-.93 1.2-1 2.02-.05.78.34 1.24.74 1.62"/></svg>',
+        '早餐': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sandwich-icon lucide-sandwich"><path d="m2.37 11.223 8.372-6.777a2 2 0 0 1 2.516 0l8.371 6.777"/><path d="M21 15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-5.25"/><path d="M3 15a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h9"/><path d="m6.67 15 6.13 4.6a2 2 0 0 0 2.8-.4l3.15-4.2"/><rect width="20" height="4" x="2" y="11" rx="1"/></svg>',
+        '其他': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+    };
+    return icons[type] || icons['其他'];
+}
+
 // 顯示詳細資料
 function showDetail(data) {
     const detailModal = document.getElementById('detailModal');
 
     detailModal.innerHTML = `
         <div class="detailModalBox">
-            <div id="closeDetailModal" style="text-align: right; cursor: pointer; font-size: 20px;">✖</div>
+            <div class="modalHeader">
+                <h2 id="detailTitle">詳細紀錄</h2>
+                <div id="closeDetailModal" class="closeDetailBtn">✖</div>
+            </div>
             <div class="detailScrollArea">
-                <p><strong>店家：</strong> ${data.shopName}</p>
-                <p><strong>日期：</strong> ${data.date}</p>
-                <p><strong>類型：</strong> ${data.foodType || '無'}</p>
-                <p><strong>價格：</strong> $ ${data.price || '0'}</p>
-                <p><strong>評分：</strong> ${'★'.repeat(data.rating || 0)}</p>
-                <hr>
-                <p><strong>心得感想：</strong></p>
-                <p style="padding: 10px; border-radius: 5px;">${data.comment || '無心得'}</p>
-                ${data.url ? `<p><strong>連結：</strong><br><a href="${data.url}" target="_blank" style="word-break: break-all; color: #561c24;">${data.url}</a></p>` : ''}
+                <p><strong>店家：　</strong> ${data.shopName}</p>
+                <p><strong>日期：　</strong> ${data.date}</p>
+                <p><strong>類型：　</strong> ${data.foodType || '無'}</p>
+                <p><strong>價格：　</strong> $ ${data.price || '0'}</p>
+                <p><strong>評分：　</strong> ${'★'.repeat(data.rating || 0)}</p>
+                <p class="commentDisplay"><strong>感想：</strong></p>
+                <p >${data.comment || '無'}</p>
+                ${data.url ? `<p class="urlDisplay"><strong>連結：</strong><br><a href="${data.url}" target="_blank" class="urlLink">${data.url}</a></p>` : ''}
             </div>
             <button id="editBtn" title="編輯紀錄">✎</button>
         </div>
@@ -232,7 +265,7 @@ saveBtn.addEventListener("click", async () => {
 
 
 
-// 打開視窗
+// 打開新增紀錄視窗
 addRecordBtn.addEventListener("click", () =>{
     currentEditId = null; // 強制重置 ID
     
