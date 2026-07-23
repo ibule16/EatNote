@@ -404,7 +404,7 @@ h2 {
 }
 
 /* 強制修正日期輸入框在手機上的預設樣式 */
-input[type="date"] {
+.modalContent input[type="date"] {
     -webkit-appearance: none; /* 移除 Safari/Chrome 的原生樣式 */
     appearance: none;
     width: 100%; /* 強制寬度填滿 */
