@@ -281,20 +281,12 @@ closeModal.addEventListener("click", () =>{
 
 // 點擊背景也關閉視窗
 window.addEventListener("click", (event) =>{
-    if(event.target == modal){
-        modal.style.display = "none";
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
     }
 });
 
 // 關閉詳細資料視窗
 document.getElementById("closeDetailModal").addEventListener("click", () => {
     document.getElementById("detailModal").style.display = "none";
-});
-
-// 點擊背景關閉
-window.addEventListener("click", (event) => {
-    const detailModal = document.getElementById("detailModal");
-    if (event.target == detailModal) {
-        detailModal.style.display = "none";
-    }
 });
