@@ -410,6 +410,13 @@ input[type="date"] {
     width: 100%; /* 強制寬度填滿 */
     box-sizing: border-box; /* 確保內距不會撐開寬度 */
     display: block;
+
+    padding: 10px;          
+    font-size: 16px;        
+    border: 1px solid #cbb6a0; 
+    border-radius: 5px;     
+    background-color: #fff6ec;
+    font-family: inherit;
 }
 
 .formRow {
@@ -456,6 +463,7 @@ input[type="date"] {
 #saveBtn {
     border-radius: 8px; /* 圓形 */
     padding: 10px;
+    font-size: 16px;
     margin-bottom: 15px;
     background-color: #561c24;
     color: #fff6ec;
