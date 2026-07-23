@@ -291,6 +291,10 @@ h3 {
     color: #561c24;
 }
 
+.detailScrollArea h3 {
+    margin-bottom: 30px;
+}
+
 /* 詳細資料區域內的文字 */
 .detailScrollArea p {
     color: #561c24;

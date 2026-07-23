@@ -164,6 +164,7 @@ function showDetail(data) {
                 <div id="closeDetailModal" class="closeDetailBtn">✖</div>
             </div>
             <div class="detailScrollArea">
+                <h3 id="detailFoodName">${data.foodName}</h3>
                 <p><strong>店家：　</strong> ${data.shopName}</p>
                 <p><strong>日期：　</strong> ${data.date}</p>
                 <p><strong>類型：　</strong> ${data.foodType || '無'}</p>
