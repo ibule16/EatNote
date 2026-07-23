@@ -62,67 +62,70 @@
                 <span id="closeModal">✖</span>
             </div>
 
-            <div class="formGroup">
+            <div class="modalScrollArea">
+                <div class="formGroup">
                 <label for="date">日期：</label>
                 <input type="date" id="date">
-            </div>
-
-            <div class="formGroup">
-                <label for="shopName">店家名稱：</label>
-                <input type="text" id="shopName">
-            </div>
-
-            <div class="formGroup">
-                <label for="foodName">食物名稱：</label>
-                <input type="text" id="foodName">
-            </div>
-
-            <div class="formRow">
-                <div class="formGroup">
-                <label for="foodType">類型：</label>
-                <input list="foodTypes" id="foodType">
-                <datalist id="foodTypes">
-                    <option value="飲料"></option>
-                    <option value="飯"></option>
-                    <option value="麵"></option>
-                    <option value="早餐"></option>
-                    <option value="其他"></option>
-                </datalist>
                 </div>
 
                 <div class="formGroup">
-                <label for="price">價格：</label>
-                <input type="number" id="price">
-                </div>    
-            </div>
-            
-            <div class="formGroup">
-                <label for="comment">感想：</label>
-                <textarea id="comment" rows="5"></textarea>
-            </div>
-
-            <div class="formGroup">
-                <label for="rating">評分：</label>
-                <div class="rating">
-                    <input type="radio" id="star5" name="rating" value="5">
-                    <label for="star5">★</label>
-                    <input type="radio" id="star4" name="rating" value="4">
-                    <label for="star4">★</label>
-                    <input type="radio" id="star3" name="rating" value="3">
-                    <label for="star3">★</label>
-                    <input type="radio" id="star2" name="rating" value="2">
-                    <label for="star2">★</label>
-                    <input type="radio" id="star1" name="rating" value="1">
-                    <label for="star1">★</label>
+                    <label for="shopName">店家名稱：</label>
+                    <input type="text" id="shopName">
                 </div>
-            </div>
 
-            <div class="formGroup">
-                <label for="url">連結：</label>
-                <input type="url" id="url">
+                <div class="formGroup">
+                    <label for="foodName">食物名稱：</label>
+                    <input type="text" id="foodName">
+                </div>
+
+                <div class="formRow">
+                    <div class="formGroup">
+                    <label for="foodType">類型：</label>
+                    <input list="foodTypes" id="foodType">
+                    <datalist id="foodTypes">
+                        <option value="飲料"></option>
+                        <option value="飯"></option>
+                        <option value="麵"></option>
+                        <option value="早餐"></option>
+                        <option value="其他"></option>
+                    </datalist>
+                    </div>
+
+                    <div class="formGroup">
+                    <label for="price">價格：</label>
+                    <input type="number" id="price">
+                    </div>    
+                </div>
+                
+                <div class="formGroup">
+                    <label for="comment">感想：</label>
+                    <textarea id="comment" rows="5"></textarea>
+                </div>
+
+                <div class="formGroup">
+                    <label for="rating">評分：</label>
+                    <div class="rating">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">★</label>
+                    </div>
+                </div>
+
+                <div class="formGroup">
+                    <label for="url">連結：</label>
+                    <input type="url" id="url">
+                </div>
+                
+                <button id="saveBtn">儲存</button>
+                
             </div>
-            
-            <button id="saveBtn">儲存</button>
         </div>
     </div>
 
@@ -130,7 +133,7 @@
     <div id="detailModal" class="modal" style="display: none;">
         <div class="modalContent">
             <div class="modalHeader">
-                <h2 id="detailTitle">詳細紀錄</h2>
+                <h3 id="detailTitle">詳細紀錄</h3>
                 <span id="closeDetailModal">&times;</span>
             </div>
             <div id="detailBody">

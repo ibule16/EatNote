@@ -337,9 +337,9 @@ h3 {
 }
 
 /* 彈窗內容區塊 */
-h2 {
+h3 {
     color: #561c24;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .modalContent {
@@ -362,6 +362,16 @@ h2 {
     display: flex;
     flex-direction: column;
     box-sizing: border-box; /* 防止 padding 撐開寬度 */
+}
+
+.modalScrollArea {
+    flex: 1; /* 吃滿剩餘空間 */
+    overflow-y: auto; /* 超出時才捲動 */
+    overflow-x: hidden;
+    padding-right: 10px; /* 防止捲軸蓋住內容 */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 這裡統一設定輸入框間距 */
 }
 
 #closeModal {
